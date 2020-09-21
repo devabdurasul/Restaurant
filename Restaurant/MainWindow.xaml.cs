@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Restaurant
 {
@@ -18,6 +16,7 @@ namespace Restaurant
         public int status = 0;
         public static int clickIndex = 0;
         public int customer = 0;
+        public int? quality = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -55,25 +54,24 @@ namespace Restaurant
             else if (clickIndex == 1)
                 SetResult("Already sent");
             else
-            {
                 Send();
-            }
         }
 
         private void Send()
         {
-                clickIndex++;
-                try
-                {
-                    server.Send(cook);
-                }
-                catch (Exception ex)
-                {
-                    SetResult(ex.Message);
-                }
-                SetResult("Requests are sent!");
-                status = 2;
+            clickIndex++;
+            try
+            {
+                quality = server.Send(cook);
             }
+            catch (Exception ex)
+            {
+                SetResult(ex.Message);
+            }
+            qualityLabel.Content = quality;
+            SetResult("Requests are sent!");
+            status = 2;
+        }
 
         public void Serve(object sender, RoutedEventArgs e)
         {
@@ -85,7 +83,7 @@ namespace Restaurant
                 case 1:
                     SetResult("Please send the requests first!");
                     break;
-                default: 
+                default:
                     Serve();
                     break;
             }

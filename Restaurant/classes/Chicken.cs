@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Restaurant
+﻿namespace Restaurant
 {
     public sealed class Chicken : CookedFood
     {
@@ -29,11 +23,13 @@ namespace Restaurant
         public override void Cook()
         {
         }
-        public override void Obtain()
+        public override IMenuItem Obtain()
         {
+            return this;
         }
-        public override void Serve()
+        public override IMenuItem Serve()
         {
+            return this;
         }
 
         public override void PrepareFood()

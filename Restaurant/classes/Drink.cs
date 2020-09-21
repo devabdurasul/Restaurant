@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Restaurant
+﻿namespace Restaurant
 {
-    public abstract class Drink : MenuItemInterface
+    public abstract class Drink : IMenuItem
     {
-        public abstract void Obtain();
+        public abstract IMenuItem Obtain();
 
-        public abstract void Serve();
+        public abstract IMenuItem Serve();
     }
 }

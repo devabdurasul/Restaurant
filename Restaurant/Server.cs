@@ -9,6 +9,8 @@ namespace Restaurant
         public int receiveIndex = 0;
         private TableRequests tableRequests;
         private Drink drinking = new Pepsi();
+        private int chickenQ;
+        private int eggQ;
 
 
         public string Receive(string chickenQ, string eggQ, string drinkingType, TableRequests tableRequests)
@@ -16,40 +18,37 @@ namespace Restaurant
             this.tableRequests = tableRequests;
             if (receiveIndex > 7)
                 throw new Exception("Up to 8 customers are allowed per table. Send to Cook first!");
-           
+            this.chickenQ = Convert.ToInt32(chickenQ);
+            this.eggQ = Convert.ToInt32(eggQ);
             if (drinkingType == "Cola")
                 drinking = new Cola();
             if (drinkingType == "Tea")
                 drinking = new Tea();
-            ServeDrinkings[receiveIndex] = drinkingType;
+            ServeDrinkings[receiveIndex] = drinking.GetType().Name;
 
-            var summaryOrder = Convert.ToInt32(chickenQ) + Convert.ToInt32(eggQ);
-            tableRequests.InitOrder(receiveIndex, summaryOrder);
-
-            //this.tableRequests.Add(receiveIndex, new Chicken(Convert.ToInt32(chickenQ)));
-            //this.tableRequests.Add(receiveIndex, new Egg(Convert.ToInt32(eggQ)));
-
-            for (int i = 0; i < Convert.ToInt32(chickenQ); i++)
+            tableRequests.customerOrders[receiveIndex] = new IMenuItem[this.chickenQ + this.eggQ];
+            tableRequests.num = 0;
+            for (int i = 0; i < this.chickenQ; i++)
             {
-                this.tableRequests.Add(receiveIndex, new Chicken(Convert.ToInt32(chickenQ)));
+                this.tableRequests.Add(receiveIndex, new Chicken(this.chickenQ));
             }
-            for (int i = 0; i < Convert.ToInt32(eggQ); i++)
+            for (int i = 0; i < this.eggQ; i++)
             {
-                this.tableRequests.Add(receiveIndex, new Egg(Convert.ToInt32(eggQ)));
+                this.tableRequests.Add(receiveIndex, new Egg(this.eggQ));
             }
 
             receiveIndex++;
             return "Request received!";
         }
 
-        public void Send(Cook cook)
+        public int? Send(Cook cook)
         {
-            cook.Process(tableRequests);
+            return cook.Process(tableRequests);
         }
         public string[] Serve()
         {
             var index = 0;
-            foreach (MenuItemInterface[] row in tableRequests.customerOrders)
+            foreach (IMenuItem[] row in tableRequests.customerOrders)
             {
                 if (row == null) continue;
                 var chQ = 0;

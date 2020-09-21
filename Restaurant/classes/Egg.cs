@@ -41,19 +41,11 @@ namespace Restaurant
         {
         }
 
-        public override void Obtain()
-        {
-        }
-
-        public override void Serve()
-        {
-        }
+        public override IMenuItem Obtain() => this;
+       
+        public override IMenuItem Serve() => this;
 
         //TODO: This method is not used. Please use this.
-        public void Dispose()
-        {
-            Discard();
-        }
-
+        public void Dispose() => Discard();
     }
 }

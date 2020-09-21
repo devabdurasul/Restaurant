@@ -1,13 +1,12 @@
-﻿using System;
-
-namespace Restaurant
+﻿namespace Restaurant
 {
     public class Cook
     {
-        public MenuItemInterface chicken = new Chicken();
-        public MenuItemInterface egg = new Egg();
+        public IMenuItem chicken = new Chicken();
+        public IMenuItem egg = new Egg();
+        private int? quality = null;
 
-        public void Process(TableRequests tableRequests)
+        public int? Process(TableRequests tableRequests)
         {
             var chickenOrders = tableRequests[chicken];
             for (int i = 0; i < chickenOrders.Length; i++)
@@ -22,8 +21,11 @@ namespace Restaurant
             {
                 if (eggOrders[i] is null) continue;
                 var egg = eggOrders[i] as Egg;
+                quality = egg.GetQuality();
                 egg.PrepareFood();
+                egg.Dispose();
             }
+            return quality;
         } 
     }
 }
