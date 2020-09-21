@@ -1,6 +1,7 @@
-﻿namespace Restaurant
-{
+﻿using System;
 
+namespace Restaurant
+{
     public class TableRequests
     {
         public MenuItemInterface[][] customerOrders = new MenuItemInterface[8][];
@@ -15,6 +16,7 @@
             ArrayInit();
         }
 
+        //TODO: You don't need this method
         public void InitOrder(int index, int summaryOrder)
         {
             num = 0;
@@ -32,6 +34,7 @@
             count++;
         }
 
+        //TODO: You don't need this method to copy arrays. You can just use Array.Resize(...)
         public void growSize()
         {
             MenuItemInterface[] temp = null;
@@ -60,6 +63,7 @@
         {
             get
             {
+                //TODO: Why 2 separate 'if' condition for 'chicken' and 'egg'? You should consider all type of menus: chicken, egg, and all type of drinks.
                 if (menuItem is Chicken)
                 {
                     ArrayInit();
@@ -93,12 +97,14 @@
             }
         }
 
-    public MenuItemInterface[] this[int customer]
-    {
-        get
+
+        //TODO: Handle cases when customer is not between 1-8.
+        public MenuItemInterface[] this[int customer]
         {
-            return customerOrders[customer];
+            get
+            {
+                return customerOrders[customer];
+            }
         }
     }
-}
 }

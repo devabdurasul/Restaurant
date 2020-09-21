@@ -7,11 +7,6 @@ namespace Restaurant
         public MenuItemInterface chicken = new Chicken();
         public MenuItemInterface egg = new Egg();
 
-        public Cook()
-        {
-        }
-
-
         public void Process(TableRequests tableRequests)
         {
             var chickenOrders = tableRequests[chicken];

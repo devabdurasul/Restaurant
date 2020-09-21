@@ -14,6 +14,7 @@ namespace Restaurant
             this.quantity = quantity;
         }
 
+        //TODO: Please use this method somewhere to show eggs quality
         public int GetQuality()
         {
             return quality = rand.Next(101);
@@ -48,6 +49,7 @@ namespace Restaurant
         {
         }
 
+        //TODO: This method is not used. Please use this.
         public void Dispose()
         {
             Discard();
