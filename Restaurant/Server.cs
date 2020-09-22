@@ -4,8 +4,7 @@ namespace Restaurant
 {
     public class Server
     {
-        public string[] ServeOrders = new string[8];
-        public string[] ServeDrinkings  = new string[8];
+        public string[] ServeDrinkings = new string[8];
         public int receiveIndex = 0;
         private TableRequests tableRequests;
         private Drink drinking = new Pepsi();
@@ -45,26 +44,23 @@ namespace Restaurant
         {
             return cook.Process(tableRequests);
         }
-        public string[] Serve()
+        public string Serve(int index)
         {
-            var index = 0;
+            var chQ = 0;
+            var eQ = 0;
+            var requests = tableRequests[index] as IMenuItem[];
+
             //TODO: Use second indexer of table request to get list of a customer orders
-            foreach (IMenuItem[] row in tableRequests.customerOrders)
+            foreach (IMenuItem request in requests)
             {
-                if (row == null) continue;
-                var chQ = 0;
-                var eQ = 0;
-                for (int i = 0; i < row.Length; i++)
-                {
-                    if (row[i] is Chicken)
-                        chQ++;
-                    if (row[i] is Egg)
-                        eQ++;
-                }
-                ServeOrders[index] = "Customer " + index + " is served " + chQ + " chicken, " + eQ + " egg, " + ServeDrinkings[index];
-                index++;
+                if (request == null) continue;
+                if (request is Chicken)
+                    chQ++;
+                if (request is Egg)
+                    eQ++;
             }
-            return ServeOrders;
+            var str = "Customer " + index + " is served " + chQ + " chicken, " + eQ + " egg, " + ServeDrinkings[index];
+            return str;
         }
     }
 }

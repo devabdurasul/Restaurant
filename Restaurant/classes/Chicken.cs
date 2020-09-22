@@ -22,14 +22,6 @@
         public override void Cook()
         {
         }
-        public override IMenuItem Obtain()
-        {
-            return this;
-        }
-        public override IMenuItem Serve()
-        {
-            return this;
-        }
 
         public override void PrepareFood()
         {

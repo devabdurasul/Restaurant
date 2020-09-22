@@ -5,15 +5,13 @@
         public CookedFood() { }
 
         //TODO: What about making this method abstract? 
-        public virtual void PrepareFood()
-        {
-        }
+        public abstract void PrepareFood();
 
         public abstract void Cook();
 
         //TODO: We discussed about implementing Obtain and Serve methods in this abstract class. Is it possible making them as virtual method and implementing?
-        public abstract IMenuItem Obtain();
+        public virtual IMenuItem Obtain() => this;
 
-        public abstract IMenuItem Serve();
+        public virtual IMenuItem Serve() => this;
     }
 }

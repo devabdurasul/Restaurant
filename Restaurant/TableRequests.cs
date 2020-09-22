@@ -42,7 +42,7 @@ namespace Restaurant
         {
             get
             {
-                if (customer > 0 && customer < 9)
+                if (customer >= 0 && customer < 9)
                     return customerOrders[customer];
                 else return "Wrong customer!";
             }

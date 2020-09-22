@@ -92,15 +92,15 @@ namespace Restaurant
         private void Serve()
         {
             server.receiveIndex = 0;
-            var statuses = server.Serve();
-            foreach (string status in statuses)
+            var index = 0;
+            for (int i = 0; i < tableRequests.customerOrders.Length; i++)
             {
-                if (status == null) continue;
-                SetResult(status);
+                if (tableRequests.customerOrders[i] == null) continue;
+                SetResult(server.Serve(index));
+                index++;
             }
             SetResult("Enjoy your food!");
             tableRequests.ClearCustomerOrders();
-            server.ServeOrders = new string[8];
             status = 0;
         }
 

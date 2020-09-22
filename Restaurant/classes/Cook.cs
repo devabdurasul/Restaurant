@@ -21,9 +21,11 @@
             {
                 if (eggOrders[i] is null) continue;
                 var egg = eggOrders[i] as Egg;
-                quality = egg.GetQuality();
-                egg.PrepareFood();
-                egg.Dispose();
+                using (egg)
+                {
+                    quality = egg.GetQuality();
+                    egg.PrepareFood();
+                }
             }
             return quality;
         } 
