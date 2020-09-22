@@ -73,7 +73,7 @@
     <Compile Include="classes\Cola.cs" />
     <Compile Include="classes\Cook.cs" />
     <Compile Include="classes\Drink.cs" />
-    <Compile Include="interfaces\MenuItemInterface.cs" />
+    <Compile Include="interfaces\IMenuItem.cs" />
     <Compile Include="classes\Pepsi.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="TableRequests.cs" />

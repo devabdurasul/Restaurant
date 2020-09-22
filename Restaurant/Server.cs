@@ -48,6 +48,7 @@ namespace Restaurant
         public string[] Serve()
         {
             var index = 0;
+            //TODO: Use second indexer of table request to get list of a customer orders
             foreach (IMenuItem[] row in tableRequests.customerOrders)
             {
                 if (row == null) continue;

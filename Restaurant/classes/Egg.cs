@@ -14,7 +14,6 @@ namespace Restaurant
             this.quantity = quantity;
         }
 
-        //TODO: Please use this method somewhere to show eggs quality
         public int GetQuality()
         {
             return quality = rand.Next(101);
@@ -22,12 +21,10 @@ namespace Restaurant
 
         public void Crack()
         {
-            // TODO:
         }
 
         private void Discard()
         {
-            // TODO:
         }
 
         public override void PrepareFood()
@@ -45,7 +42,8 @@ namespace Restaurant
        
         public override IMenuItem Serve() => this;
 
-        //TODO: This method is not used. Please use this.
+        //TODO: Can you use "Using statement", so it will automatically call Dispose() method?
+        //https://www.c-sharpcorner.com/article/the-using-statement-in-C-Sharp/#:~:text=The%20C%23%20using%20statement%20defines,example%20%2D%20an%20exception%20is%20thrown.
         public void Dispose() => Discard();
     }
 }

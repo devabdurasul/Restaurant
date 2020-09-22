@@ -17,7 +17,6 @@
 
         public void CutUp()
         {
-            // TODO:
         }
 
         public override void Cook()
