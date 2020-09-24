@@ -1,51 +1,42 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Restaurant
 {
-    public class TableRequests
+    public class TableRequests : IEnumerable
     {
-        public IMenuItem[][] customerOrders = new IMenuItem[8][]; //TODO: It should be private.
+        public Dictionary<string, List<IMenuItem>> customerOrders = new Dictionary<string, List<IMenuItem>>();
         public int num = 0;
 
-        public void Add(int customer, IMenuItem menuItem) => customerOrders[customer][num++] = menuItem;
-
-        public void ClearCustomerOrders() => customerOrders = new IMenuItem[8][];
-
-        public IMenuItem[] this[IMenuItem menuItem]
+        public void Add<T>(string customerName) where T : IMenuItem
         {
-            get
-            {                
-                IMenuItem[]  array = new IMenuItem[1];
-                int count = 0;
-
-                for (int i = 0; i < customerOrders.Length; i++)
-                {
-                    if (customerOrders[i] == null) continue;
-                    for (int j = 0; j < customerOrders[i].Length; j++)
-                    {
-                        if (customerOrders[i][j].GetType() == menuItem.GetType())
-                        {
-                            Array.Resize(ref array, array.Length + 1);
-                            array[count] = customerOrders[i][j];
-                            count++;
-                        }
-
-                    }
-                }
-                return array;
-            }
+            IMenuItem order = Activator.CreateInstance(typeof(T)) as IMenuItem;
+            bool exists = customerOrders.ContainsKey(customerName);
+            if (!exists)
+                customerOrders.Add(customerName, new List<IMenuItem>());
+            customerOrders[customerName].Add(order as CookedFood);
         }
 
-
-        //TODO: This indexer should be used when serving order to customers by server to get each customer orders
-        public object this[int customer]
+        public List<IMenuItem> Get<T>()
         {
-            get
-            {
-                if (customer >= 0 && customer < 9)
-                    return customerOrders[customer];
-                else return "Wrong customer!";
-            }
+            List<IMenuItem> orders = new List<IMenuItem>();
+            foreach (var order in customerOrders)
+                foreach (var item in order.Value)
+                    if (item is T)
+                        orders.Add(item);
+            return orders;
+        }
+
+        public object this[string customerName]
+        {
+            get => customerOrders[customerName];
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            foreach (var order in customerOrders)
+                yield return order.Key;
         }
     }
 }

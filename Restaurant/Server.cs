@@ -1,18 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Restaurant
 {
     public class Server
     {
-        public string[] ServeDrinkings = new string[8];
+        public List<string> ServeDrinkings = new List<string>();
+        public List<string> ServeOrders = new List<string>();
         public int receiveIndex = 0;
         private TableRequests tableRequests;
         private Drink drinking = new Pepsi();
         private int chickenQ;
         private int eggQ;
 
+        private event ReadyDelegate _ready;
+        public event ReadyDelegate Ready
+        {
+            add => _ready += value;
+            remove => _ready -= value;
+        }
 
-        public string Receive(string chickenQ, string eggQ, string drinkingType, TableRequests tableRequests)
+
+        public string Receive(string chickenQ, string eggQ, string customerName, string drinkingType, TableRequests tableRequests)
         {
             this.tableRequests = tableRequests;
             if (receiveIndex > 7)
@@ -23,44 +32,35 @@ namespace Restaurant
                 drinking = new Cola();
             if (drinkingType == "Tea")
                 drinking = new Tea();
-            ServeDrinkings[receiveIndex] = drinking.GetType().Name;
+            ServeDrinkings.Add("Customer " + customerName.ToUpper() + " is served " + drinking.GetType().Name);
 
-            tableRequests.customerOrders[receiveIndex] = new IMenuItem[this.chickenQ + this.eggQ];
-            tableRequests.num = 0;
             for (int i = 0; i < this.chickenQ; i++)
-            {
-                this.tableRequests.Add(receiveIndex, new Chicken(this.chickenQ));
-            }
+                tableRequests.Add<Chicken>(customerName);
             for (int i = 0; i < this.eggQ; i++)
-            {
-                this.tableRequests.Add(receiveIndex, new Egg(this.eggQ));
-            }
-
+                tableRequests.Add<Egg>(customerName);
             receiveIndex++;
-            return "Request received!";
+            return "Request received from: " + customerName.ToUpper();
         }
 
-        public int? Send(Cook cook)
+        public int? Send() => _ready?.Invoke(tableRequests);
+        
+        public void Serve()
         {
-            return cook.Process(tableRequests);
-        }
-        public string Serve(int index)
-        {
-            var chQ = 0;
-            var eQ = 0;
-            var requests = tableRequests[index] as IMenuItem[];
-
-            //TODO: Use second indexer of table request to get list of a customer orders
-            foreach (IMenuItem request in requests)
+            foreach (var request in tableRequests)
             {
-                if (request == null) continue;
-                if (request is Chicken)
-                    chQ++;
-                if (request is Egg)
-                    eQ++;
+                var orders = tableRequests[(string)request] as List<IMenuItem>;
+                var chQ = 0;
+                var eQ = 0;
+                foreach (var item in orders)
+                {
+                    if (item == null) continue;
+                    if (item is Chicken)
+                        chQ++;
+                    if (item is Egg)
+                        eQ++;
+                }
+                ServeOrders.Add("Customer " + request.ToString().ToUpper() + " is served " + chQ + " chicken, " + eQ + " egg");
             }
-            var str = "Customer " + index + " is served " + chQ + " chicken, " + eQ + " egg, " + ServeDrinkings[index];
-            return str;
         }
     }
 }

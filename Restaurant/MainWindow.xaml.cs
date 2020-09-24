@@ -8,6 +8,9 @@ namespace Restaurant
     /// </summary>
     /// 
 
+    public delegate int? ReadyDelegate(TableRequests tableRequests);
+    public delegate void ProcessedDelegate();
+
     public partial class MainWindow : Window
     {
         public Server server;
@@ -15,23 +18,21 @@ namespace Restaurant
         public TableRequests tableRequests;
         public int status = 0;
         public static int clickIndex = 0;
-        public int customer = 0;
         public int? quality = null;
+        public string customerPrevName;
         public MainWindow()
         {
+            Initialize();
             InitializeComponent();
-            server = new Server();
-            cook = new Cook();
-            tableRequests = new TableRequests();
         }
 
         public void Receive(object sender, RoutedEventArgs e)
         {
-            if (status > 1) return;
+            if (!canRecieve()) return;
             var result = "";
             try
             {
-                result = server.Receive(chickenQ.Text, eggQ.Text, drinkingType.Text, tableRequests);
+                result = server.Receive(chickenQ.Text, eggQ.Text, customerName.Text, drinkingType.Text, tableRequests);
             }
             catch (Exception ex)
             {
@@ -42,9 +43,25 @@ namespace Restaurant
                 if (result.Length > 0)
                     SetResult(result);
                 clickIndex = 0;
-                customer++;
                 status = 1;
+                customerPrevName = customerName.Text;
             }
+        }
+
+        private bool canRecieve()
+        {
+            if (status > 1) return false;
+            if (customerName.Text == "")
+            {
+                SetResult("Please, fill the customer name field!");
+                return false;
+            }
+            if (customerName.Text == customerPrevName)
+            {
+                SetResult("Request from " + customerPrevName.ToUpper() + " have already been received, Please enter another name or try to enter your surname!");
+                return false;
+            }
+            return true;
         }
 
         public void Send(object sender, RoutedEventArgs e)
@@ -62,7 +79,7 @@ namespace Restaurant
             clickIndex++;
             try
             {
-                quality = server.Send(cook);
+                quality = server.Send();
             }
             catch (Exception ex)
             {
@@ -89,18 +106,34 @@ namespace Restaurant
             }
         }
 
+        private void Initialize() 
+        {
+            server = new Server();
+            cook = new Cook();
+            tableRequests = new TableRequests();
+            server.Ready += (TableRequests tableRequests) => cook.Process(tableRequests);
+            cook.Processed += server.Serve;
+        }
+
+        private void ClearCustomerName()
+        {
+            customerName.Text = "";
+            customerPrevName = "";
+        }
+
         private void Serve()
         {
-            server.receiveIndex = 0;
-            var index = 0;
-            for (int i = 0; i < tableRequests.customerOrders.Length; i++)
+            foreach (var drink in server.ServeDrinkings)
             {
-                if (tableRequests.customerOrders[i] == null) continue;
-                SetResult(server.Serve(index));
-                index++;
+                SetResult(drink);
+            }
+            foreach (var order in server.ServeOrders)
+            {
+                SetResult(order);
             }
             SetResult("Enjoy your food!");
-            tableRequests.ClearCustomerOrders();
+            Initialize();
+            ClearCustomerName();
             status = 0;
         }
 
