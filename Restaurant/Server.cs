@@ -8,11 +8,9 @@ namespace Restaurant
         public List<string> ServeDrinkings = new List<string>();
         public List<string> ServeOrders = new List<string>();
         //TODO: If these fields are used only by one method then you can move the fields inside that method.
-        public int receiveIndex = 0; //TODO: Why this is public?
+        private int receiveIndex = 0; //TODO: Why this is public?
         private TableRequests tableRequests;
-        private Drink drinking = new Pepsi();
-        private int chickenQ;
-        private int eggQ;
+        
 
         private event ReadyDelegate _ready;
         public event ReadyDelegate Ready
@@ -27,17 +25,18 @@ namespace Restaurant
             this.tableRequests = tableRequests;
             if (receiveIndex > 7)
                 throw new Exception("Up to 8 customers are allowed per table. Send to Cook first!");
-            this.chickenQ = Convert.ToInt32(chickenQ);
-            this.eggQ = Convert.ToInt32(eggQ);
+            var chQ = Convert.ToInt32(chickenQ);
+            var eQ = Convert.ToInt32(eggQ);
+            Drink drinking = new Pepsi();
             if (drinkingType == "Cola")
                 drinking = new Cola();
             if (drinkingType == "Tea")
                 drinking = new Tea();
             ServeDrinkings.Add("Customer " + customerName.ToUpper() + " is served " + drinking.GetType().Name);
 
-            for (int i = 0; i < this.chickenQ; i++)
+            for (int i = 0; i < chQ; i++)
                 tableRequests.Add<Chicken>(customerName);
-            for (int i = 0; i < this.eggQ; i++)
+            for (int i = 0; i < eQ; i++)
                 tableRequests.Add<Egg>(customerName);
             receiveIndex++;
             return "Request received from: " + customerName.ToUpper();
@@ -49,7 +48,7 @@ namespace Restaurant
         {
             foreach (var request in tableRequests)
             {
-                var orders = tableRequests[(string)request] as List<IMenuItem>;
+                var orders = tableRequests[request.Key];
                 var chQ = 0;
                 var eQ = 0;
                 foreach (var item in orders)
@@ -60,7 +59,7 @@ namespace Restaurant
                     if (item is Egg)
                         eQ++;
                 }
-                ServeOrders.Add("Customer " + request.ToString().ToUpper() + " is served " + chQ + " chicken, " + eQ + " egg");
+                ServeOrders.Add("Customer " + request.Key.ToString().ToUpper() + " is served " + chQ + " chicken, " + eQ + " egg");
             }
         }
     }

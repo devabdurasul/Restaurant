@@ -11,15 +11,21 @@ namespace Restaurant
     public delegate int? ReadyDelegate(TableRequests tableRequests);
     public delegate void ProcessedDelegate();
 
+    public enum Statuses
+    {
+        notRecieved,
+        notSent,
+        notServed
+    }
+
     public partial class MainWindow : Window
     {
         public Server server;
         public Cook cook;
         public TableRequests tableRequests;
-        public int status = 0;
+        public Statuses status;
         public static int clickIndex = 0;
         public int? quality = null;
-        public string customerPrevName;
         public MainWindow()
         {
             Initialize();
@@ -44,22 +50,20 @@ namespace Restaurant
                 if (result.Length > 0)
                     SetResult(result);
                 clickIndex = 0;
-                status = 1;
-                customerPrevName = customerName.Text;
+                status = Statuses.notSent;
             }
         }
 
         private bool canRecieve()
         {
-            if (status > 1) return false;
+            if (status == Statuses.notServed)
+            {
+                SetResult("Please, serve the requests sent first!");
+                return false;
+            }
             if (customerName.Text == "")
             {
                 SetResult("Please, fill the customer name field!");
-                return false;
-            }
-            if (customerName.Text == customerPrevName)
-            {
-                SetResult("Request from " + customerPrevName.ToUpper() + " have already been received, Please enter another name or try to enter your surname!");
                 return false;
             }
             return true;
@@ -67,7 +71,7 @@ namespace Restaurant
 
         public void Send(object sender, RoutedEventArgs e)
         {
-            if (status == 0)
+            if (status == Statuses.notRecieved)
                 SetResult("Please receive the requests first!");
             else if (clickIndex == 1)
                 SetResult("Already sent");
@@ -88,7 +92,7 @@ namespace Restaurant
             }
             qualityLabel.Content = quality;
             SetResult("Requests are sent!");
-            status = 2;
+            status = Statuses.notServed;
         }
 
         public void Serve(object sender, RoutedEventArgs e)
@@ -96,10 +100,10 @@ namespace Restaurant
             //TODO: It would be better you create enum for the statuses
             switch (status)
             {
-                case 0:
+                case Statuses.notRecieved:
                     SetResult("Please receive the requests first!");
                     break;
-                case 1:
+                case Statuses.notSent:
                     SetResult("Please send the requests first!");
                     break;
                 default:
@@ -117,12 +121,6 @@ namespace Restaurant
             cook.Processed += server.Serve;
         }
 
-        private void ClearCustomerName()
-        {
-            customerName.Text = "";
-            customerPrevName = "";
-        }
-
         private void Serve()
         {
             foreach (var drink in server.ServeDrinkings)
@@ -135,7 +133,7 @@ namespace Restaurant
             }
             SetResult("Enjoy your food!");
             Initialize();
-            ClearCustomerName();
+            customerName.Text = "";
             status = 0;
         }
 
