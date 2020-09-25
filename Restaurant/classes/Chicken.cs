@@ -2,6 +2,7 @@
 {
     public sealed class Chicken : CookedFood
     {
+        //TODO: This quantity property and constructors are not used, please use them or just delete them.
         private int quantity;
         public Chicken() { }
 
@@ -10,7 +11,8 @@
             this.quantity = quantity;
         }
 
-        public int Quantity {
+        public int Quantity
+        {
             get => quantity;
         }
 

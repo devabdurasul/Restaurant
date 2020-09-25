@@ -28,7 +28,8 @@ namespace Restaurant
 
         public void Receive(object sender, RoutedEventArgs e)
         {
-            if (!canRecieve()) return;
+            //TODO: I tried to receive orders second time for the same person, it says "Please enter another name or try to enter your surname!". In this case it should increase orders od the person.
+            if (!canRecieve()) return;//TODO: You should show a message about it, because user doesn't know why he can not receive.
             var result = "";
             try
             {
@@ -92,6 +93,7 @@ namespace Restaurant
 
         public void Serve(object sender, RoutedEventArgs e)
         {
+            //TODO: It would be better you create enum for the statuses
             switch (status)
             {
                 case 0:

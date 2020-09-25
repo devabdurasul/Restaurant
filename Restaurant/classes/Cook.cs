@@ -13,6 +13,7 @@
 
         public int? Process(TableRequests tableRequests)
         {
+            //TODO: some code duplicated here. Can you use CookedFood type instead of both types Chicken and Egg?
             var chickenOrders = tableRequests.Get<Chicken>();
             foreach (var item in chickenOrders)
                 (item as Chicken).PrepareFood();

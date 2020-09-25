@@ -4,13 +4,15 @@ using System.Collections.Generic;
 
 namespace Restaurant
 {
+    //TODO: Can you refactor this class to make it more smaller?
     public class TableRequests : IEnumerable
     {
         public Dictionary<string, List<IMenuItem>> customerOrders = new Dictionary<string, List<IMenuItem>>();
-        public int num = 0;
+        public int num = 0;//TODO: This is not used. You can remove this variable.
 
         public void Add<T>(string customerName) where T : IMenuItem
         {
+            //TODO: what is the Quantity of the order?
             IMenuItem order = Activator.CreateInstance(typeof(T)) as IMenuItem;
             bool exists = customerOrders.ContainsKey(customerName);
             if (!exists)

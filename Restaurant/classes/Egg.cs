@@ -4,6 +4,7 @@ namespace Restaurant
 {
     public sealed class Egg : CookedFood, IDisposable
     {
+        //TODO: This quantity property and constructors are not used, please use them or just delete them.
         private int quantity;
         private int quality;
         Random rand = new Random();
