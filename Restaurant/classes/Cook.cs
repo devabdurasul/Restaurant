@@ -4,8 +4,8 @@
     {
         private int? quality = null;
 
-        private event ProcessedDelegate _processed;
-        public event ProcessedDelegate Processed
+        private event Processed _processed;
+        public event Processed Processed
         {
             add => _processed += value;
             remove => _processed -= value;

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Restaurant
 {
-    //TODO: Can you refactor this class to make it more smaller?
     public class TableRequests : Dictionary<string, List<IMenuItem>>
     {
         public void Add<T>(string customerName) where T : IMenuItem

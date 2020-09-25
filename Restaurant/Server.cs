@@ -7,13 +7,10 @@ namespace Restaurant
     {
         public List<string> ServeDrinkings = new List<string>();
         public List<string> ServeOrders = new List<string>();
-        //TODO: If these fields are used only by one method then you can move the fields inside that method.
-        private int receiveIndex = 0; //TODO: Why this is public?
-        private TableRequests tableRequests;
-        
-
-        private event ReadyDelegate _ready;
-        public event ReadyDelegate Ready
+        private int receiveIndex = 0; 
+        private TableRequests tableRequests;        
+        private event Ready _ready;
+        public event Ready Ready
         {
             add => _ready += value;
             remove => _ready -= value;

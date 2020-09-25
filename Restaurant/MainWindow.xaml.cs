@@ -7,15 +7,14 @@ namespace Restaurant
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-
-    public delegate int? ReadyDelegate(TableRequests tableRequests);
-    public delegate void ProcessedDelegate();
+    public delegate int? Ready(TableRequests tableRequests);
+    public delegate void Processed();
 
     public enum Statuses
     {
-        notRecieved,
-        notSent,
-        notServed
+        NotRecieved,
+        NotSent,
+        NotServed
     }
 
     public partial class MainWindow : Window
@@ -34,8 +33,7 @@ namespace Restaurant
 
         public void Receive(object sender, RoutedEventArgs e)
         {
-            //TODO: I tried to receive orders second time for the same person, it says "Please enter another name or try to enter your surname!". In this case it should increase orders od the person.
-            if (!canRecieve()) return;//TODO: You should show a message about it, because user doesn't know why he can not receive.
+            if (!canRecieve()) return;
             var result = "";
             try
             {
@@ -50,13 +48,13 @@ namespace Restaurant
                 if (result.Length > 0)
                     SetResult(result);
                 clickIndex = 0;
-                status = Statuses.notSent;
+                status = Statuses.NotSent;
             }
         }
 
         private bool canRecieve()
         {
-            if (status == Statuses.notServed)
+            if (status == Statuses.NotServed)
             {
                 SetResult("Please, serve the requests sent first!");
                 return false;
@@ -71,7 +69,7 @@ namespace Restaurant
 
         public void Send(object sender, RoutedEventArgs e)
         {
-            if (status == Statuses.notRecieved)
+            if (status == Statuses.NotRecieved)
                 SetResult("Please receive the requests first!");
             else if (clickIndex == 1)
                 SetResult("Already sent");
@@ -92,18 +90,17 @@ namespace Restaurant
             }
             qualityLabel.Content = quality;
             SetResult("Requests are sent!");
-            status = Statuses.notServed;
+            status = Statuses.NotServed;
         }
 
         public void Serve(object sender, RoutedEventArgs e)
         {
-            //TODO: It would be better you create enum for the statuses
             switch (status)
             {
-                case Statuses.notRecieved:
+                case Statuses.NotRecieved:
                     SetResult("Please receive the requests first!");
                     break;
-                case Statuses.notSent:
+                case Statuses.NotSent:
                     SetResult("Please send the requests first!");
                     break;
                 default:
