@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Restaurant
 {
@@ -15,12 +15,7 @@ namespace Restaurant
 
         public List<IMenuItem> Get<T>()
         {
-            List<IMenuItem> orders = new List<IMenuItem>();
-            foreach (var order in this)
-                foreach (var item in order.Value)
-                    if (item is T)
-                        orders.Add(item);
-            return orders;
+            return this.SelectMany(order => order.Value).Where(order => order is T).ToList();
         }
     }
 }

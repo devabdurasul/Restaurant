@@ -1,17 +1,32 @@
-﻿namespace Restaurant
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Restaurant
 {
+    public enum CookState
+    {
+        Free,
+        Busy
+    }
     public class Cook
     {
-        private int? quality = null;
+        public int? quality = null;
+        public CookState State;
+        Semaphore semaphore = new Semaphore(2, 2);
 
-        private event Processed _processed;
-        public event Processed Processed
+        public Task Process(TableRequests tableRequests) => Task.Run(() => OnRunProcess(tableRequests));
+
+        private void OnRunProcess(TableRequests tableRequests)
         {
-            add => _processed += value;
-            remove => _processed -= value;
+            semaphore.WaitOne();
+            State = CookState.Busy;
+            OnProcess(tableRequests);
+            Thread.Sleep(14000);
+            State = CookState.Free;
+            semaphore.Release();
         }
 
-        public int? Process(TableRequests tableRequests)
+        private void OnProcess(TableRequests tableRequests)
         {
             var chickenOrders = tableRequests.Get<Chicken>();
             foreach (var item in chickenOrders)
@@ -27,8 +42,6 @@
                     egg.PrepareFood();
                 }
             }
-            _processed?.Invoke();
-            return quality;
         }
     }
 }

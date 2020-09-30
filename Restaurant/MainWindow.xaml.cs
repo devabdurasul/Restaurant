@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Restaurant
@@ -7,24 +11,21 @@ namespace Restaurant
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     /// 
-    public delegate int? Ready(TableRequests tableRequests);
-    public delegate void Processed();
 
     public enum Statuses
     {
         NotRecieved,
-        NotSent,
-        NotServed
+        NotSent
     }
 
     public partial class MainWindow : Window
     {
         public Server server;
-        public Cook cook;
+        public Cook FirstCook;
+        public Cook SecondCook;
         public TableRequests tableRequests;
+        public object locker = new object();
         public Statuses status;
-        public static int clickIndex = 0;
-        public int? quality = null;
         public MainWindow()
         {
             Initialize();
@@ -35,30 +36,28 @@ namespace Restaurant
         {
             if (!canRecieve()) return;
             var result = "";
-            try
+            lock (locker)
             {
-                result = server.Receive(chickenQ.Text, eggQ.Text, customerName.Text, drinkingType.Text, tableRequests);
-            }
-            catch (Exception ex)
-            {
-                SetResult(ex.Message);
-            }
-            finally
-            {
-                if (result.Length > 0)
-                    SetResult(result);
-                clickIndex = 0;
-                status = Statuses.NotSent;
+                try
+                {
+                    result = server.Receive(chickenQ.Text, eggQ.Text, customerName.Text, drinkingType.Text, tableRequests);
+                    Thread.Sleep(100);
+                }
+                catch (Exception ex)
+                {
+                    SetResult(ex.Message);
+                }
+                finally
+                {
+                    if (result.Length > 0)
+                        SetResult(result);
+                    status = Statuses.NotSent;
+                }
             }
         }
 
         private bool canRecieve()
         {
-            if (status == Statuses.NotServed)
-            {
-                SetResult("Please, serve the requests sent first!");
-                return false;
-            }
             if (customerName.Text == "")
             {
                 SetResult("Please, fill the customer name field!");
@@ -67,71 +66,96 @@ namespace Restaurant
             return true;
         }
 
+        public void RunTask(Cook cook)
+        {
+            Task prepare = new Task( () => cook.Process(tableRequests));
+            Task<List<string>> prepareServe = prepare.ContinueWith(server.Serve);
+            prepare.Start();
+            prepareServe.Wait();
+            GetQuality(cook);
+            Serve(prepareServe.Result);
+        }
+
         public void Send(object sender, RoutedEventArgs e)
         {
             if (status == Statuses.NotRecieved)
                 SetResult("Please receive the requests first!");
-            else if (clickIndex == 1)
-                SetResult("Already sent");
             else
                 Send();
         }
 
         private void Send()
         {
-            clickIndex++;
             try
             {
-                quality = server.Send();
+                while (true)
+                {
+                    if (FirstCook.State == CookState.Free)
+                    {
+                        RunTask(FirstCook);
+                        return;
+                    }
+                    else if (SecondCook.State == CookState.Free)
+                    {
+                        RunTask(SecondCook);
+                        return;
+                    }
+                    else
+                    {
+                        Thread.Sleep(2000);
+                        continue;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 SetResult(ex.Message);
             }
-            qualityLabel.Content = quality;
-            SetResult("Requests are sent!");
-            status = Statuses.NotServed;
         }
 
-        public void Serve(object sender, RoutedEventArgs e)
+        public void Serve(List<string> orders)
         {
-            switch (status)
+            if (!CanServe(orders)) return;
+
+            var drinks = server.ServeDrinkings.OrderBy(d => d);
+            foreach (var drink in drinks)
+                SetResult(drink);
+
+            foreach (var order in orders)
+                SetResult(order);
+            Reset();
+        }
+
+        private bool CanServe(List<string> orders)
+        {
+            if (orders.Count() == 0 && server.ServeDrinkings.Count() == 0)
             {
-                case Statuses.NotRecieved:
-                    SetResult("Please receive the requests first!");
-                    break;
-                case Statuses.NotSent:
-                    SetResult("Please send the requests first!");
-                    break;
-                default:
-                    Serve();
-                    break;
+                SetResult("Nothing to serve!");
+                return false;
             }
+            SetResult("Requests are sent!");
+            return true;
+        }
+
+        private void Reset()
+        {
+            SetResult("Enjoy your food!");
+            customerName.Text = "";
+            tableRequests = new TableRequests();
+            status = Statuses.NotRecieved;
+        }
+
+        private void GetQuality(Cook cook)
+        {
+            qualityLabel.Content = cook.quality;
         }
 
         private void Initialize() 
         {
             server = new Server();
-            cook = new Cook();
+            FirstCook = new Cook();
+            SecondCook = new Cook();
             tableRequests = new TableRequests();
-            server.Ready += (TableRequests tableRequests) => cook.Process(tableRequests);
-            cook.Processed += server.Serve;
-        }
-
-        private void Serve()
-        {
-            foreach (var drink in server.ServeDrinkings)
-            {
-                SetResult(drink);
-            }
-            foreach (var order in server.ServeOrders)
-            {
-                SetResult(order);
-            }
-            SetResult("Enjoy your food!");
-            Initialize();
-            customerName.Text = "";
-            status = 0;
         }
 
         private void SetResult(string message) => results.Text += message + "\n";

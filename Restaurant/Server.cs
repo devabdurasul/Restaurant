@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Restaurant
 {
@@ -9,13 +12,6 @@ namespace Restaurant
         public List<string> ServeOrders = new List<string>();
         private int receiveIndex = 0; 
         private TableRequests tableRequests;        
-        private event Ready _ready;
-        public event Ready Ready
-        {
-            add => _ready += value;
-            remove => _ready -= value;
-        }
-
 
         public string Receive(string chickenQ, string eggQ, string customerName, string drinkingType, TableRequests tableRequests)
         {
@@ -29,7 +25,7 @@ namespace Restaurant
                 drinking = new Cola();
             if (drinkingType == "Tea")
                 drinking = new Tea();
-            ServeDrinkings.Add("Customer " + customerName.ToUpper() + " is served " + drinking.GetType().Name);
+            ServeDrinkings.Add(customerName.ToUpper() + " is served " + drinking.GetType().Name);
 
             for (int i = 0; i < chQ; i++)
                 tableRequests.Add<Chicken>(customerName);
@@ -39,25 +35,17 @@ namespace Restaurant
             return "Request received from: " + customerName.ToUpper();
         }
 
-        public int? Send() => _ready?.Invoke(tableRequests);
-        
-        public void Serve()
+        public List<string> Serve(Task t)
         {
-            foreach (var request in tableRequests)
+            var orders = tableRequests.OrderBy(request => request.Key);
+            foreach (var order in orders)
             {
-                var orders = tableRequests[request.Key];
-                var chQ = 0;
-                var eQ = 0;
-                foreach (var item in orders)
-                {
-                    if (item == null) continue;
-                    if (item is Chicken)
-                        chQ++;
-                    if (item is Egg)
-                        eQ++;
-                }
-                ServeOrders.Add("Customer " + request.Key.ToString().ToUpper() + " is served " + chQ + " chicken, " + eQ + " egg");
+                var chQ = order.Value.Where(request => request is Chicken).Count();
+                var eQ = order.Value.Where(request => request is Egg).Count();
+                ServeOrders.Add(order.Key.ToUpper() + " is served " + chQ + " chicken, " + eQ + " egg");
             }
+            Thread.Sleep(1000);
+            return ServeOrders;
         }
     }
 }
