@@ -38,6 +38,7 @@ namespace Restaurant
         public List<string> Serve(Task t)
         {
             var orders = tableRequests.OrderBy(request => request.Key);
+            //TODO: Please LINQ here instead of foreach
             foreach (var order in orders)
             {
                 var chQ = order.Value.Where(request => request is Chicken).Count();
