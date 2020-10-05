@@ -11,7 +11,6 @@ namespace Restaurant
     public class Cook
     {
         //TODO: It's better to have method to get quality. If you make egg's GetQuality() method as static then the OnProcess method will be more smaller. 
-        public int? quality = null;
         public CookState State;
         Semaphore semaphore = new Semaphore(2, 2);
 
@@ -29,21 +28,17 @@ namespace Restaurant
 
         private void OnProcess(TableRequests tableRequests)
         {
-            //TODO: Can you refactor this foreach to use Parallel?
-            var chickenOrders = tableRequests.Get<Chicken>();
-            foreach (var item in chickenOrders)
-                (item as Chicken).PrepareFood();
+            //Parallel.Invoke( () => {
+                //TODO: Can you refactor this foreach to use Parallel?
+                var chickenOrders = tableRequests.Get<Chicken>();
+                Parallel.ForEach(chickenOrders, chicken => (chicken as Chicken).PrepareFood());
 
-            var eggOrders = tableRequests.Get<Egg>();
-            foreach (var item in eggOrders)
-            {
-                var egg = item as Egg;
-                using (egg)
-                {
-                    quality = egg.GetQuality();
-                    egg.PrepareFood();
-                }
-            }
+                var eggOrders = tableRequests.Get<Egg>();
+                Parallel.ForEach(eggOrders, egg => {
+                    using (egg as Egg)
+                        (egg as Egg).PrepareFood();
+                });
+            //});
         }
     }
 }

@@ -72,7 +72,7 @@ namespace Restaurant
             Task<List<string>> prepareServe = prepare.ContinueWith(server.Serve);
             prepare.Start();
             prepareServe.Wait();
-            GetQuality(cook);
+            qualityLabel.Content = Egg.GetQuality();
             Serve(prepareServe.Result);
         }
 
@@ -143,11 +143,8 @@ namespace Restaurant
             customerName.Text = "";
             tableRequests = new TableRequests();
             status = Statuses.NotRecieved;
-        }
-
-        private void GetQuality(Cook cook)
-        {
-            qualityLabel.Content = cook.quality;
+            server.receiveIndex = 0;
+            server.ServeDrinkings.Clear();
         }
 
         private void Initialize() 

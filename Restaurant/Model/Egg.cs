@@ -4,7 +4,7 @@ namespace Restaurant
 {
     public sealed class Egg : CookedFood, IDisposable
     {
-        public int GetQuality() => new Random().Next(101);
+        public static int GetQuality() => new Random().Next(101);
 
         public void Crack() { }
 

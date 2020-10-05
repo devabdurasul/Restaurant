@@ -70,14 +70,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="classes\Cola.cs" />
-    <Compile Include="classes\Cook.cs" />
-    <Compile Include="classes\Drink.cs" />
-    <Compile Include="interfaces\IMenuItem.cs" />
-    <Compile Include="classes\Pepsi.cs" />
-    <Compile Include="Server.cs" />
-    <Compile Include="TableRequests.cs" />
-    <Compile Include="classes\Tea.cs" />
+    <Compile Include="Model\Cola.cs" />
+    <Compile Include="Model\Cook.cs" />
+    <Compile Include="Model\Drink.cs" />
+    <Compile Include="IMenuItem.cs" />
+    <Compile Include="Model\Pepsi.cs" />
+    <Compile Include="Model\Server.cs" />
+    <Compile Include="Model\TableRequests.cs" />
+    <Compile Include="Model\Tea.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -86,15 +86,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="classes\Chicken.cs" />
-    <Compile Include="classes\Egg.cs" />
+    <Compile Include="Model\Chicken.cs" />
+    <Compile Include="Model\Egg.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="classes\CookedFood.cs" />
+    <Compile Include="Model\CookedFood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
