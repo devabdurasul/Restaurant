@@ -10,8 +10,8 @@ namespace Restaurant
     {
         public List<string> ServeDrinkings = new List<string>();
         public List<string> ServeOrders = new List<string>();
-        public int receiveIndex = 0; 
-        private TableRequests tableRequests;        
+        public int receiveIndex = 0;
+        private TableRequests tableRequests;
 
         public string Receive(string chickenQ, string eggQ, string customerName, string drinkingType, TableRequests tableRequests)
         {
@@ -37,13 +37,12 @@ namespace Restaurant
 
         public List<string> Serve(Task t)
         {
-            //TODO: Please LINQ here instead of foreach
             var serveOrders = from order in tableRequests
                               orderby order.Key
                               let chicken = order.Value.Count(request => request is Chicken)
                               let egg = order.Value.Count(request => request is Egg)
                               select order.Key.ToUpper() + " is served " + chicken + " chicken, " + egg + " egg";
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             return serveOrders.ToList();
         }
     }

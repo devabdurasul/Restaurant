@@ -17,7 +17,6 @@ namespace Restaurant
         NotSent
     }
 
-    //TODO: Please re-arrange the project file schema. Maybe we don't need these folders: class, interfaces. Instead of them you can create Model folder and move all class files?
     public partial class MainWindow : Window
     {
         public Server server;
