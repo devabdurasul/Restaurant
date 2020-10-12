@@ -42,7 +42,7 @@ namespace Restaurant
                               let chicken = order.Value.Count(request => request is Chicken)
                               let egg = order.Value.Count(request => request is Egg)
                               select order.Key.ToUpper() + " is served " + chicken + " chicken, " + egg + " egg";
-            Thread.Sleep(2000);
+            Thread.Sleep(500);
             return serveOrders.ToList();
         }
     }
